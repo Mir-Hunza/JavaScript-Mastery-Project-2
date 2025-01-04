@@ -1,16 +1,75 @@
-let img = document.querySelector("img");
-let h2 = document.querySelector("h2");
-let prevsrc = img.src;
-let prevText = h2.innerText;
+let food = document.querySelector(".food");
 
-img.addEventListener("mouseover", () => {
-    img.src = "https://cdn.pixabay.com/photo/2019/12/07/19/23/earth-hour-4679932_640.jpg";
-    h2.innerText = "Pakistan";
-    img.style.border = "2px solid yellow";
-})
+let italian = document.querySelector("#italian");
+let american = document.querySelector("#american");
+let canadian = document.querySelector("#canadian");
+let thai = document.querySelector("#thai");
+let british = document.querySelector("#british");
+let russian = document.querySelector("#russian");
 
-img.addEventListener("mouseleave", () => {
-    img.src = prevsrc;
-    h2.innerText = prevText;
-    img.style.border = "2px solid blue";
+let recipe;
+
+const fetchData = async (area) => {
+  const api = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/filter.php?a=${area}`
+  );
+  const data = await api.json();
+  recipe = data.meals;
+  //   console.log("my recipe = ", recipe);
+  showData(recipe);
+};
+
+const searchRecipe = () => {
+  let input = document.querySelector("#search");
+
+  input.addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+      let inputValue = input.value;
+
+      const api = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/search.php?s=${inputValue}`
+      );
+      const data = await api.json();
+      recipe = data.meals;
+      showData(recipe);
+    }
+  });
+};
+
+searchRecipe();
+
+let showData = (recipe) => {
+  food.innerHTML = recipe
+    .map(
+      (meal) => `
+    <div style="text-align:center">
+    <div>
+    <img src=${meal.strMealThumb} style="width:220px; border-radius: 10px; border: 2px solid blue" />
+    </div>
+    <h5 style="margin:10px">${meal.strMeal}</h5>
+    </div>
+    `
+    )
+    .join(" ");
+};
+
+american.addEventListener("click", () => {
+  fetchData("american");
 });
+italian.addEventListener("click", () => {
+  fetchData("itaian");
+});
+canadian.addEventListener("click", () => {
+  fetchData("canadian");
+});
+thai.addEventListener("click", () => {
+  fetchData("thai");
+});
+british.addEventListener("click", () => {
+  fetchData("british");
+});
+russian.addEventListener("click", () => {
+  fetchData("russian");
+});
+
+fetchData("italian");
